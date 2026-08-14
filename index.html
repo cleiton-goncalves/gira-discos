@@ -1,0 +1,462 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Gira-Discos · 200 álbuns de rock</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#16130F;
+    --surface:#1F1B16;
+    --raised:#26201A;
+    --ink:#F3ECE0;
+    --muted:#9A8F7E;
+    --line:rgba(243,236,224,.10);
+    --amber:#E9A23B;
+    --crimson:#E0452F;
+    --vinyl:#0C0A08;
+    --display:'Anton',sans-serif;
+    --body:'Space Grotesk',sans-serif;
+    --mono:'Space Mono',monospace;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{
+    background:
+      radial-gradient(1200px 600px at 80% -10%, rgba(233,162,59,.08), transparent 60%),
+      radial-gradient(900px 500px at -5% 10%, rgba(224,69,47,.06), transparent 55%),
+      var(--bg);
+    color:var(--ink);
+    font-family:var(--body);
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+    min-height:100vh;
+  }
+  .wrap{max-width:1040px;margin:0 auto;padding:28px 20px 80px}
+
+  /* ---------- Header ---------- */
+  header{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap;
+    border-bottom:1px solid var(--line);padding-bottom:20px}
+  .brand .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.28em;text-transform:uppercase;color:var(--amber);margin:0 0 6px}
+  .brand h1{font-family:var(--display);font-weight:400;font-size:clamp(34px,7vw,62px);line-height:.92;
+    letter-spacing:.01em;margin:0;text-transform:uppercase}
+  .brand p{color:var(--muted);margin:8px 0 0;font-size:13px;max-width:42ch}
+  .counter{text-align:right;min-width:150px}
+  .counter .num{font-family:var(--mono);font-size:13px;color:var(--muted)}
+  .counter .num b{color:var(--ink);font-size:26px}
+  .bar{height:6px;background:var(--raised);border-radius:20px;margin-top:10px;overflow:hidden;min-width:150px}
+  .bar>i{display:block;height:100%;width:0;border-radius:20px;
+    background:linear-gradient(90deg,var(--amber),var(--crimson));transition:width .5s ease}
+
+  /* ---------- Turntable / hero ---------- */
+  .deck{display:grid;grid-template-columns:auto 1fr;gap:34px;align-items:center;
+    background:linear-gradient(180deg,var(--surface),#1a1712);
+    border:1px solid var(--line);border-radius:18px;padding:30px;margin:26px 0 34px}
+  .platter{position:relative;width:210px;height:210px;flex:none}
+  .platter .disc{
+    position:absolute;inset:0;border-radius:50%;
+    background:
+      repeating-radial-gradient(circle at 50% 50%, #1a1712 0 1px, var(--vinyl) 1px 4px);
+    box-shadow:0 18px 40px rgba(0,0,0,.55), inset 0 0 0 1px rgba(255,255,255,.03);
+  }
+  .platter .sheen{position:absolute;inset:0;border-radius:50%;pointer-events:none;
+    background:linear-gradient(125deg, rgba(255,255,255,.12), transparent 30%, transparent 70%, rgba(255,255,255,.05))}
+  .platter .label{position:absolute;top:50%;left:50%;width:88px;height:88px;transform:translate(-50%,-50%);
+    border-radius:50%;background:radial-gradient(circle at 50% 40%,var(--amber),#c07c1e);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;
+    box-shadow:inset 0 0 0 2px rgba(0,0,0,.18)}
+  .platter .label .lr{font-family:var(--mono);font-weight:700;color:#2a1c05;font-size:11px;letter-spacing:.1em}
+  .platter .label .ln{font-family:var(--display);color:#2a1c05;font-size:30px;line-height:1}
+  .platter .spindle{position:absolute;top:50%;left:50%;width:9px;height:9px;transform:translate(-50%,-50%);
+    border-radius:50%;background:#0c0a08;z-index:2}
+  .platter .disc{transition:transform 1.15s cubic-bezier(.15,.75,.15,1)}
+  .platter.spinning .disc{animation:spin .5s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+
+  .now .kicker{font-family:var(--mono);font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--muted);margin:0 0 6px}
+  .now .rank{font-family:var(--mono);color:var(--crimson);font-weight:700;font-size:13px}
+  .now .title{font-family:var(--display);font-weight:400;text-transform:uppercase;
+    font-size:clamp(26px,4.4vw,44px);line-height:.96;margin:4px 0 8px}
+  .now .artist{font-size:17px;color:var(--ink)}
+  .now .artist b{color:var(--amber);font-weight:600}
+  .now .meta{font-family:var(--mono);font-size:12px;color:var(--muted);margin-top:6px}
+  .now.empty .title{font-size:clamp(22px,3.6vw,34px)}
+  .heard-badge{display:none;margin-top:12px;font-family:var(--mono);font-size:11px;letter-spacing:.14em;
+    text-transform:uppercase;color:var(--amber);border:1px solid rgba(233,162,59,.4);
+    border-radius:20px;padding:5px 12px;width:max-content}
+  .now.is-heard .heard-badge{display:block}
+
+  .controls{display:flex;gap:12px;flex-wrap:wrap;margin-top:20px}
+  button{font-family:var(--body);cursor:pointer;border:0;border-radius:10px;font-size:14px;font-weight:600;
+    padding:13px 20px;transition:transform .08s ease, filter .15s ease, background .15s ease, color .15s}
+  button:active{transform:translateY(1px)}
+  button:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
+  .btn-spin{background:var(--crimson);color:#fff;letter-spacing:.02em}
+  .btn-spin:hover{filter:brightness(1.08)}
+  .btn-heard{background:var(--amber);color:#2a1c05}
+  .btn-heard:hover{filter:brightness(1.06)}
+  .btn-ghost{background:transparent;color:var(--muted);border:1px solid var(--line)}
+  .btn-ghost:hover{color:var(--ink);border-color:var(--muted)}
+
+  /* ---------- List ---------- */
+  .listbar{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin:0 0 14px}
+  .listbar h2{font-family:var(--display);font-weight:400;text-transform:uppercase;font-size:20px;margin:0;letter-spacing:.02em}
+  .search{flex:1;min-width:180px}
+  .search input{width:100%;background:var(--surface);border:1px solid var(--line);color:var(--ink);
+    border-radius:10px;padding:11px 14px;font-family:var(--body);font-size:14px}
+  .search input::placeholder{color:var(--muted)}
+  .search input:focus{outline:2px solid var(--amber);outline-offset:1px}
+  .filters{display:flex;gap:6px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:4px}
+  .filters button{padding:8px 13px;border-radius:7px;font-size:12.5px;font-weight:600;background:transparent;color:var(--muted)}
+  .filters button.active{background:var(--raised);color:var(--ink)}
+
+  ol.albums{list-style:none;margin:0;padding:0;border:1px solid var(--line);border-radius:14px;overflow:hidden}
+  ol.albums li{display:grid;grid-template-columns:52px 1fr auto;align-items:center;gap:14px;
+    padding:13px 16px;border-bottom:1px solid var(--line);transition:background .12s}
+  ol.albums li:last-child{border-bottom:0}
+  ol.albums li:hover{background:rgba(255,255,255,.02)}
+  ol.albums li .rk{font-family:var(--mono);color:var(--muted);font-size:13px}
+  ol.albums li .info .t{font-weight:600;font-size:15px}
+  ol.albums li .info .s{color:var(--muted);font-size:13px}
+  ol.albums li .info .s .yr{font-family:var(--mono)}
+  ol.albums li .tick{width:26px;height:26px;border-radius:50%;border:1.6px solid var(--line);
+    background:transparent;display:flex;align-items:center;justify-content:center;color:transparent;
+    font-size:14px;padding:0;flex:none}
+  ol.albums li.heard{background:rgba(233,162,59,.05)}
+  ol.albums li.heard .info .t{text-decoration:line-through;text-decoration-color:rgba(233,162,59,.6);color:var(--muted)}
+  ol.albums li.heard .rk{color:var(--amber)}
+  ol.albums li.heard .tick{background:var(--amber);border-color:var(--amber);color:#2a1c05}
+  .empty-list{padding:30px 16px;text-align:center;color:var(--muted);font-size:14px}
+
+  footer{margin-top:26px;color:var(--muted);font-size:12px;display:flex;justify-content:space-between;
+    gap:14px;flex-wrap:wrap;align-items:center}
+  footer a{color:var(--muted)}
+  .btn-reset{background:transparent;color:var(--muted);border:1px solid var(--line);font-size:12px;padding:8px 13px}
+  .btn-reset:hover{color:var(--crimson);border-color:rgba(224,69,47,.5)}
+
+  @media (max-width:640px){
+    .deck{grid-template-columns:1fr;justify-items:center;text-align:center;padding:24px}
+    .now .heard-badge{margin-left:auto;margin-right:auto}
+    .controls{justify-content:center}
+    ol.albums li{grid-template-columns:38px 1fr auto;gap:10px;padding:12px}
+  }
+  @media (prefers-reduced-motion:reduce){
+    .platter.spinning .disc{animation:none}
+    .platter .disc{transition:none}
+    button:active{transform:none}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="brand">
+      <p class="eyebrow">200 álbuns de rock · Rolling Stone</p>
+      <h1>Gira-Discos</h1>
+      <p>Sorteie um álbum, ouça do começo ao fim e risque da lista. Seu histórico fica salvo automaticamente.</p>
+    </div>
+    <div class="counter">
+      <div class="num"><b id="cHeard">0</b> <span id="cTotal">/ 200</span> ouvidos</div>
+      <div class="bar"><i id="cBar"></i></div>
+    </div>
+  </header>
+
+  <section class="deck">
+    <div class="platter" id="platter" aria-hidden="true">
+      <div class="disc" id="disc"></div>
+      <div class="sheen"></div>
+      <div class="label">
+        <span class="lr">Nº</span>
+        <span class="ln" id="discRank">—</span>
+      </div>
+      <div class="spindle"></div>
+    </div>
+    <div class="now empty" id="now">
+      <p class="kicker">Toca agora</p>
+      <div class="rank" id="nowRank"></div>
+      <div class="title" id="nowTitle">Aperte sortear pra começar</div>
+      <div class="artist" id="nowArtist"></div>
+      <div class="meta" id="nowMeta"></div>
+      <span class="heard-badge">✓ Já ouvido</span>
+      <div class="controls">
+        <button class="btn-spin" id="spinBtn">⟳ Sortear álbum</button>
+        <button class="btn-heard" id="heardBtn" style="display:none">Marcar como ouvido</button>
+      </div>
+    </div>
+  </section>
+
+  <div class="listbar">
+    <h2>A lista</h2>
+    <div class="search"><input id="search" type="search" placeholder="Buscar por artista ou álbum…" autocomplete="off"></div>
+    <div class="filters" role="group" aria-label="Filtrar">
+      <button data-f="all" class="active">Todos</button>
+      <button data-f="unheard">Não ouvidos</button>
+      <button data-f="heard">Ouvidos</button>
+    </div>
+  </div>
+  <ol class="albums" id="list"></ol>
+
+  <footer>
+    <span>Seleção de rock a partir dos rankings da Rolling Stone (<i>500 Greatest Albums</i>). Ordem aproximada.</span>
+    <button class="btn-reset" id="resetBtn">Zerar histórico</button>
+  </footer>
+</div>
+
+<script>
+// ---------- Data: 200 rock albums (artist / title / year) ----------
+const ALBUMS = [
+ ["The Beatles","Abbey Road",1969],["Nirvana","Nevermind",1991],["Fleetwood Mac","Rumours",1977],
+ ["Prince and the Revolution","Purple Rain",1984],["Bob Dylan","Blood on the Tracks",1975],
+ ["The Beatles","Revolver",1966],["The Rolling Stones","Exile on Main St.",1972],
+ ["The Clash","London Calling",1979],["Bob Dylan","Highway 61 Revisited",1965],["Radiohead","Kid A",2000],
+ ["The Beach Boys","Pet Sounds",1966],["The Beatles","Sgt. Pepper's Lonely Hearts Club Band",1967],
+ ["The Velvet Underground","The Velvet Underground & Nico",1967],["Bruce Springsteen","Born to Run",1975],
+ ["The Jimi Hendrix Experience","Are You Experienced",1967],
+ ["David Bowie","The Rise and Fall of Ziggy Stardust and the Spiders From Mars",1972],
+ ["Led Zeppelin","Led Zeppelin IV",1971],["Pink Floyd","The Dark Side of the Moon",1973],
+ ["The Beatles","The Beatles (White Album)",1968],["The Who","Who's Next",1971],
+ ["Radiohead","OK Computer",1997],["The Band","The Band",1969],["The Rolling Stones","Let It Bleed",1969],
+ ["The Rolling Stones","Sticky Fingers",1971],["Ramones","Ramones",1976],
+ ["Bob Dylan","Bringing It All Back Home",1965],["Bruce Springsteen","Darkness on the Edge of Town",1978],
+ ["The Doors","The Doors",1967],["Led Zeppelin","Led Zeppelin",1969],["Led Zeppelin","Physical Graffiti",1975],
+ ["The Beatles","Rubber Soul",1965],["Patti Smith","Horses",1975],
+ ["Sex Pistols","Never Mind the Bollocks Here's the Sex Pistols",1977],["The Velvet Underground","Loaded",1970],
+ ["Neil Young","After the Gold Rush",1970],["Neil Young","Harvest",1972],
+ ["The Kinks","The Kinks Are the Village Green Preservation Society",1968],
+ ["Talking Heads","Remain in Light",1980],["The Stooges","Fun House",1970],["The Stooges","Raw Power",1973],
+ ["David Bowie","Hunky Dory",1971],["David Bowie","Low",1977],["Television","Marquee Moon",1977],
+ ["The Velvet Underground","White Light/White Heat",1968],["Cream","Disraeli Gears",1967],
+ ["Creedence Clearwater Revival","Cosmo's Factory",1970],["The Byrds","Sweetheart of the Rodeo",1968],
+ ["Van Morrison","Astral Weeks",1968],["Van Morrison","Moondance",1970],
+ ["The Allman Brothers Band","At Fillmore East",1971],
+ ["Derek and the Dominos","Layla and Other Assorted Love Songs",1970],["The Who","Tommy",1969],
+ ["The Who","Live at Leeds",1970],["Pink Floyd","The Wall",1979],["Pink Floyd","Wish You Were Here",1975],
+ ["Black Sabbath","Paranoid",1970],["Deep Purple","Machine Head",1972],
+ ["Led Zeppelin","Houses of the Holy",1973],["AC/DC","Back in Black",1980],
+ ["Queen","A Night at the Opera",1975],["Aerosmith","Toys in the Attic",1975],
+ ["Lynyrd Skynyrd","(Pronounced 'Lĕh-'nérd 'Skin-'nérd)",1973],["Eagles","Hotel California",1976],
+ ["Steely Dan","Aja",1977],["Fleetwood Mac","Fleetwood Mac",1975],
+ ["Elton John","Goodbye Yellow Brick Road",1973],["Bob Dylan","Blonde on Blonde",1966],
+ ["Bob Dylan","The Freewheelin' Bob Dylan",1963],["Simon & Garfunkel","Bridge Over Troubled Water",1970],
+ ["Crosby, Stills, Nash & Young","Déjà Vu",1970],["Joni Mitchell","Blue",1971],
+ ["The Band","Music From Big Pink",1968],["Creedence Clearwater Revival","Willy and the Poor Boys",1969],
+ ["The Jimi Hendrix Experience","Electric Ladyland",1968],
+ ["The Jimi Hendrix Experience","Axis: Bold as Love",1967],["Cream","Wheels of Fire",1968],
+ ["Bruce Springsteen","Born in the U.S.A.",1984],
+ ["Bruce Springsteen","The Wild, the Innocent & the E Street Shuffle",1973],
+ ["Tom Petty and the Heartbreakers","Damn the Torpedoes",1979],["R.E.M.","Murmur",1983],
+ ["R.E.M.","Automatic for the People",1992],["U2","The Joshua Tree",1987],["U2","Achtung Baby",1991],
+ ["The Police","Synchronicity",1983],["The Pretenders","Pretenders",1980],
+ ["Elvis Costello","This Year's Model",1978],["Elvis Costello and the Attractions","Armed Forces",1979],
+ ["Talking Heads","Fear of Music",1979],["Talking Heads","Stop Making Sense",1984],
+ ["Joy Division","Unknown Pleasures",1979],["Joy Division","Closer",1980],
+ ["The Cure","Disintegration",1989],["New Order","Power, Corruption & Lies",1983],
+ ["The Smiths","The Smiths",1984],["The Smiths","The Queen Is Dead",1986],["Pixies","Doolittle",1989],
+ ["Pixies","Surfer Rosa",1988],["Sonic Youth","Daydream Nation",1988],["Hüsker Dü","Zen Arcade",1984],
+ ["The Replacements","Let It Be",1984],["Minutemen","Double Nickels on the Dime",1984],
+ ["Black Flag","Damaged",1981],["Dead Kennedys","Fresh Fruit for Rotting Vegetables",1980],
+ ["The Clash","The Clash",1977],["The Jam","All Mod Cons",1978],["Buzzcocks","Singles Going Steady",1979],
+ ["Wire","Pink Flag",1977],["Gang of Four","Entertainment!",1979],["Iggy Pop","Lust for Life",1977],
+ ["Iggy Pop","The Idiot",1977],["David Bowie","Station to Station",1976],["David Bowie","\u201CHeroes\u201D",1977],
+ ["David Bowie","Aladdin Sane",1973],["Roxy Music","Roxy Music",1972],["Roxy Music","Avalon",1982],
+ ["Brian Eno","Here Come the Warm Jets",1974],["King Crimson","In the Court of the Crimson King",1969],
+ ["Genesis","Selling England by the Pound",1973],["Yes","Close to the Edge",1972],
+ ["Rush","Moving Pictures",1981],["Rush","2112",1976],["Jethro Tull","Aqualung",1971],
+ ["Emerson, Lake & Palmer","Brain Salad Surgery",1973],["Frank Zappa","Hot Rats",1969],
+ ["Captain Beefheart","Trout Mask Replica",1969],["Big Star","#1 Record",1972],
+ ["Big Star","Radio City",1974],["The Modern Lovers","The Modern Lovers",1976],
+ ["Nick Drake","Pink Moon",1972],["Neil Young","Everybody Knows This Is Nowhere",1969],
+ ["Neil Young","Tonight's the Night",1975],["The Byrds","Mr. Tambourine Man",1965],
+ ["Buffalo Springfield","Buffalo Springfield Again",1967],["The Doors","L.A. Woman",1971],
+ ["Santana","Abraxas",1970],["Grateful Dead","American Beauty",1970],
+ ["Grateful Dead","Workingman's Dead",1970],["The Allman Brothers Band","Eat a Peach",1972],
+ ["ZZ Top","Eliminator",1983],["Van Halen","Van Halen",1978],
+ ["Guns N' Roses","Appetite for Destruction",1987],["Metallica","Master of Puppets",1986],
+ ["Metallica","Metallica (The Black Album)",1991],["Metallica","Ride the Lightning",1984],
+ ["Slayer","Reign in Blood",1986],["Megadeth","Rust in Peace",1990],
+ ["Iron Maiden","The Number of the Beast",1982],["Judas Priest","British Steel",1980],
+ ["Motörhead","Ace of Spades",1980],["Def Leppard","Hysteria",1987],
+ ["Bon Jovi","Slippery When Wet",1986],["Nirvana","In Utero",1993],
+ ["Nirvana","MTV Unplugged in New York",1994],["Pearl Jam","Ten",1991],["Pearl Jam","Vs.",1993],
+ ["Soundgarden","Superunknown",1994],["Alice in Chains","Dirt",1992],
+ ["Stone Temple Pilots","Core",1992],["The Smashing Pumpkins","Siamese Dream",1993],
+ ["The Smashing Pumpkins","Mellon Collie and the Infinite Sadness",1995],
+ ["Red Hot Chili Peppers","Blood Sugar Sex Magik",1991],["Red Hot Chili Peppers","Californication",1999],
+ ["Rage Against the Machine","Rage Against the Machine",1992],["Jane's Addiction","Nothing's Shocking",1988],
+ ["Beck","Odelay",1996],["Radiohead","The Bends",1995],["Radiohead","In Rainbows",2007],
+ ["Oasis","(What's the Story) Morning Glory?",1995],["Oasis","Definitely Maybe",1994],
+ ["Blur","Parklife",1994],["Pulp","Different Class",1995],["The Verve","Urban Hymns",1997],
+ ["Weezer","Weezer (The Blue Album)",1994],["Weezer","Pinkerton",1996],["Green Day","Dookie",1994],
+ ["Green Day","American Idiot",2004],["The Offspring","Smash",1994],
+ ["Foo Fighters","The Colour and the Shape",1997],["The White Stripes","Elephant",2003],
+ ["The White Stripes","White Blood Cells",2001],["The Strokes","Is This It",2001],
+ ["The Strokes","Room on Fire",2003],
+ ["Arctic Monkeys","Whatever People Say I Am, That's What I'm Not",2006],["Arctic Monkeys","AM",2013],
+ ["Interpol","Turn on the Bright Lights",2002],["Yeah Yeah Yeahs","Fever to Tell",2003],
+ ["The Killers","Hot Fuss",2004],["Arcade Fire","Funeral",2004],["The National","Boxer",2007],
+ ["LCD Soundsystem","Sound of Silver",2007],["Wilco","Yankee Hotel Foxtrot",2002],
+ ["My Bloody Valentine","Loveless",1991],["The Jesus and Mary Chain","Psychocandy",1985],
+ ["Dinosaur Jr.","You're Living All Over Me",1987],["PJ Harvey","Rid of Me",1993],
+ ["PJ Harvey","Stories From the City, Stories From the Sea",2000],["Jeff Buckley","Grace",1994],
+ ["Tom Waits","Rain Dogs",1985],["Bruce Springsteen","Nebraska",1982],
+ ["Neil Young","Rust Never Sleeps",1979]
+].map((x,i)=>({rank:i+1,artist:x[0],title:x[1],year:x[2]}));
+
+const TOTAL = ALBUMS.length;
+
+// ---------- Persistence (window.storage with in-memory fallback) ----------
+const KEY = "girodiscos:v1";
+let state = { heard: [], current: null };
+const mem = {}; // fallback store
+
+async function storeGet(k){
+  try{ const v = localStorage.getItem(k); if(v!==null) return v; }catch(e){}
+  return (k in mem)?mem[k]:null;
+}
+async function storeSet(k,v){
+  mem[k]=v;
+  try{ localStorage.setItem(k,v); }catch(e){}
+}
+async function load(){
+  const raw = await storeGet(KEY);
+  if(raw){ try{ const p=JSON.parse(raw); state.heard=Array.isArray(p.heard)?p.heard:[]; state.current=p.current??null; }catch(e){} }
+}
+async function save(){ await storeSet(KEY, JSON.stringify(state)); }
+
+const heardSet = () => new Set(state.heard);
+
+// ---------- Elements ----------
+const $ = s => document.querySelector(s);
+const list = $("#list");
+const platter = $("#platter");
+const disc = $("#disc");
+const discRank = $("#discRank");
+const now = $("#now");
+const nowRank = $("#nowRank"), nowTitle = $("#nowTitle"), nowArtist = $("#nowArtist"), nowMeta = $("#nowMeta");
+const spinBtn = $("#spinBtn"), heardBtn = $("#heardBtn");
+const cHeard = $("#cHeard"), cBar = $("#cBar");
+const search = $("#search");
+let filter = "all";
+let spinning = false;
+
+// ---------- Render ----------
+function updateCounter(){
+  const n = heardSet().size;
+  cHeard.textContent = n;
+  cBar.style.width = (n/TOTAL*100)+"%";
+}
+
+function renderNow(){
+  const set = heardSet();
+  if(state.current==null){
+    now.classList.add("empty"); now.classList.remove("is-heard");
+    nowRank.textContent=""; nowTitle.textContent="Aperte sortear pra começar";
+    nowArtist.textContent=""; nowMeta.textContent="";
+    discRank.textContent="—"; heardBtn.style.display="none";
+    return;
+  }
+  const a = ALBUMS[state.current-1];
+  now.classList.remove("empty");
+  nowRank.textContent = "Nº "+a.rank+" na lista";
+  nowTitle.textContent = a.title;
+  nowArtist.innerHTML = "<b>"+esc(a.artist)+"</b>";
+  nowMeta.textContent = a.year;
+  discRank.textContent = a.rank;
+  const isHeard = set.has(a.rank);
+  now.classList.toggle("is-heard", isHeard);
+  heardBtn.style.display="inline-block";
+  heardBtn.textContent = isHeard ? "Ainda não ouvi" : "Marcar como ouvido";
+  heardBtn.classList.toggle("btn-heard", !isHeard);
+  heardBtn.classList.toggle("btn-ghost", isHeard);
+}
+
+function esc(s){return s.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));}
+
+function renderList(){
+  const set = heardSet();
+  const q = search.value.trim().toLowerCase();
+  const rows = ALBUMS.filter(a=>{
+    const h = set.has(a.rank);
+    if(filter==="heard" && !h) return false;
+    if(filter==="unheard" && h) return false;
+    if(q && !(a.artist.toLowerCase().includes(q)||a.title.toLowerCase().includes(q))) return false;
+    return true;
+  });
+  if(!rows.length){ list.innerHTML='<div class="empty-list">Nada por aqui com esse filtro.</div>'; return; }
+  list.innerHTML = rows.map(a=>{
+    const h = set.has(a.rank);
+    return `<li class="${h?'heard':''}" data-rank="${a.rank}">
+      <span class="rk">${String(a.rank).padStart(3,'0')}</span>
+      <div class="info"><div class="t">${esc(a.title)}</div>
+        <div class="s">${esc(a.artist)} · <span class="yr">${a.year}</span></div></div>
+      <button class="tick" title="${h?'Marcar como não ouvido':'Marcar como ouvido'}" aria-label="Alternar ouvido">✓</button>
+    </li>`;
+  }).join("");
+}
+
+function renderAll(){ updateCounter(); renderNow(); renderList(); }
+
+// ---------- Actions ----------
+async function toggleHeard(rank){
+  const set = heardSet();
+  if(set.has(rank)) set.delete(rank); else set.add(rank);
+  state.heard = [...set];
+  await save();
+  renderAll();
+}
+
+function spin(){
+  if(spinning) return;
+  const set = heardSet();
+  const pool = ALBUMS.filter(a=>!set.has(a.rank));
+  if(!pool.length){
+    now.classList.remove("empty","is-heard");
+    nowRank.textContent=""; nowTitle.textContent="🏆 Você ouviu os 200!";
+    nowArtist.innerHTML="<b>Missão cumprida.</b>"; nowMeta.textContent="Zere o histórico pra recomeçar.";
+    discRank.textContent="★"; heardBtn.style.display="none";
+    return;
+  }
+  spinning = true;
+  spinBtn.disabled = true;
+  platter.classList.add("spinning");
+  const pick = pool[Math.floor(Math.random()*pool.length)];
+  const reduce = window.matchMedia("(prefers-reduced-motion:reduce)").matches;
+  const dur = reduce ? 60 : 1000;
+  setTimeout(async ()=>{
+    platter.classList.remove("spinning");
+    state.current = pick.rank;
+    await save();
+    renderNow();
+    spinning = false;
+    spinBtn.disabled = false;
+  }, dur);
+}
+
+// ---------- Events ----------
+spinBtn.addEventListener("click", spin);
+heardBtn.addEventListener("click", ()=>{ if(state.current!=null) toggleHeard(state.current); });
+list.addEventListener("click", e=>{
+  const li = e.target.closest("li"); if(!li) return;
+  toggleHeard(Number(li.dataset.rank));
+});
+search.addEventListener("input", renderList);
+document.querySelectorAll(".filters button").forEach(b=>{
+  b.addEventListener("click", ()=>{
+    document.querySelectorAll(".filters button").forEach(x=>x.classList.remove("active"));
+    b.classList.add("active"); filter=b.dataset.f; renderList();
+  });
+});
+$("#resetBtn").addEventListener("click", async ()=>{
+  if(!confirm("Zerar todo o histórico de álbuns ouvidos? Isso não tem volta.")) return;
+  state = { heard: [], current: null };
+  await save(); renderAll();
+});
+
+// ---------- Init ----------
+(async ()=>{ await load(); renderAll(); })();
+</script>
+</body>
+</html>
