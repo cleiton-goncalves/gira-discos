@@ -137,8 +137,17 @@
   .btn-reset{background:transparent;color:var(--muted);border:1px solid var(--line);font-size:12px;padding:8px 13px}
   .btn-reset:hover{color:var(--crimson);border-color:rgba(224,69,47,.5)}
 
+  .services{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+  .svc{font-family:var(--body);font-size:12.5px;font-weight:600;text-decoration:none;color:var(--ink);
+    border:1px solid var(--line);border-radius:20px;padding:7px 14px 7px 12px;display:inline-flex;
+    align-items:center;gap:7px;transition:border-color .15s,background .15s,color .15s}
+  .svc::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--c)}
+  .svc:hover{border-color:var(--c);background:color-mix(in srgb,var(--c) 15%, transparent)}
+  .svc:focus-visible{outline:2px solid var(--c);outline-offset:2px}
+  .svc-sp{--c:#1DB954}.svc-ap{--c:#FC3C44}.svc-yt{--c:#FF3B30}.svc-am{--c:#00A8E1}
   @media (max-width:640px){
     .deck{grid-template-columns:1fr;justify-items:center;text-align:center;padding:24px}
+    .services{justify-content:center}
     .now .heard-badge{margin-left:auto;margin-right:auto}
     .controls{justify-content:center}
     ol.albums li{grid-template-columns:38px 1fr auto;gap:10px;padding:12px}
@@ -181,6 +190,12 @@
       <div class="artist" id="nowArtist"></div>
       <div class="meta" id="nowMeta"></div>
       <span class="heard-badge">✓ Já ouvido</span>
+      <div class="services" id="services" style="display:none">
+        <a class="svc svc-sp" id="lnkSpotify" target="_blank" rel="noopener">Spotify</a>
+        <a class="svc svc-ap" id="lnkApple" target="_blank" rel="noopener">Apple Music</a>
+        <a class="svc svc-yt" id="lnkYoutube" target="_blank" rel="noopener">YouTube Music</a>
+        <a class="svc svc-am" id="lnkAmazon" target="_blank" rel="noopener">Amazon Music</a>
+      </div>
       <div class="controls">
         <button class="btn-spin" id="spinBtn">⟳ Sortear álbum</button>
         <button class="btn-heard" id="heardBtn" style="display:none">Marcar como ouvido</button>
@@ -337,6 +352,18 @@ const discRank = $("#discRank");
 const now = $("#now");
 const nowRank = $("#nowRank"), nowTitle = $("#nowTitle"), nowArtist = $("#nowArtist"), nowMeta = $("#nowMeta");
 const spinBtn = $("#spinBtn"), heardBtn = $("#heardBtn");
+const services = $("#services");
+const lnkSpotify = $("#lnkSpotify"), lnkApple = $("#lnkApple"),
+      lnkYoutube = $("#lnkYoutube"), lnkAmazon = $("#lnkAmazon");
+function svcURLs(a){
+  const q = encodeURIComponent(a.artist + " " + a.title);
+  return {
+    sp:"https://open.spotify.com/search/"+q+"/albums",
+    ap:"https://music.apple.com/search?term="+q,
+    yt:"https://music.youtube.com/search?q="+q,
+    am:"https://music.amazon.com/search/"+q
+  };
+}
 const cHeard = $("#cHeard"), cBar = $("#cBar");
 const search = $("#search");
 let filter = "all";
@@ -356,6 +383,7 @@ function renderNow(){
     nowRank.textContent=""; nowTitle.textContent="Aperte sortear pra começar";
     nowArtist.textContent=""; nowMeta.textContent="";
     discRank.textContent="—"; heardBtn.style.display="none";
+    services.style.display="none";
     return;
   }
   const a = ALBUMS[state.current-1];
@@ -371,6 +399,9 @@ function renderNow(){
   heardBtn.textContent = isHeard ? "Ainda não ouvi" : "Marcar como ouvido";
   heardBtn.classList.toggle("btn-heard", !isHeard);
   heardBtn.classList.toggle("btn-ghost", isHeard);
+  const u = svcURLs(a);
+  lnkSpotify.href=u.sp; lnkApple.href=u.ap; lnkYoutube.href=u.yt; lnkAmazon.href=u.am;
+  services.style.display="flex";
 }
 
 function esc(s){return s.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));}
@@ -417,6 +448,7 @@ function spin(){
     nowRank.textContent=""; nowTitle.textContent="🏆 Você ouviu os 200!";
     nowArtist.innerHTML="<b>Missão cumprida.</b>"; nowMeta.textContent="Zere o histórico pra recomeçar.";
     discRank.textContent="★"; heardBtn.style.display="none";
+    services.style.display="none";
     return;
   }
   spinning = true;
